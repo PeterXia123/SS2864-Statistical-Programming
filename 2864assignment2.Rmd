@@ -1,0 +1,156 @@
+---
+title: "hello"
+author: "Yufei xia"
+date: '2019-02-05'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##question 1
+```{r cars}
+help('scan')
+data_frameA<-data.frame(name =c("john","lily"),character = c("male","female"), weight = c(72,65))
+vectorB<-c(1,2,3,4)
+write.table(data_frameA,"dataA")
+write(vectorB,"vectorB")
+read_A = read.table("dataA")
+read_A 
+data_frameA
+read_B = scan("vectorB")
+read_B
+vectorB
+#after print we can easily see the contents in yhe files are same as in vector and data.frame
+
+```
+we get the same data.frame and same vector.
+
+## question 2
+
+```{r pressure, echo=FALSE}
+?dump
+?save
+#Dump takes a vector of names of R objects and produces text representations of the objects on a file or connection,a dump file can usually be sourced into another R session. Save writes an external representation of R objects to the specified file,the objects can be read back from the file at a later date by using the function load or attach . so they are similar in both are present for R objects, the difference between them is that dump could be a source but save is doing rade back.
+Biu1=c(1:5)
+Biu2=c(6:10)
+dump(c("Biu1","Biu2"),file="Biu3")
+file.rename("Biu3","Biu4")
+Pa1=c(1:7)
+Pa2=c(7:13)
+save(Pa1,Pa2,file="Pa3")
+file.rename("Pa3","Pa4")
+?source
+?load
+remove(Biu1,Biu2)
+remove(Pa1,Pa2)
+source("Biu4")
+Biu1
+Biu2
+load("Pa4")
+Pa1
+Pa2
+#after "dump" and "save" , if we remove the object we can get them back by source and load and it is same as the objects we created.
+
+
+
+```
+Dump takes a vector of names of R objects and produces text representations of the objects on a file or connection,a dump file can usually be sourced into another R session. Save writes an external representation of R objects to the specified file,the objects can be read back from the file at a later date by using the function load or attach . so they are similar in both are present for R objects, the difference between them is that dump could be a source but save is doing rade back.
+after "dump" and "save" , if we remove the object we can get them back by source and load and it is same as the objects we created.
+
+##question 3
+```{r}
+## question 3 
+z =numeric()
+x = runif(1000000) 
+y = runif(1000000)
+plot(x,y)
+lines(seq(0,1,by=0.000001),sqrt((1/2)^2-(seq(0,1,by=0.000001)-(1/2))^2),col=2)
+z=((x-(1/2))^2+(y-(1/2))^2<(1/2)^2)*4
+pi.estimate=mean(z)
+print("the pi estimate is")
+pi.estimate
+print("the varience is")
+var(z)
+print("the confidence interval is")
+confidenceinterval=c(pi.estimate+1.96*sqrt(var(z))/sqrt(1000000),pi.estimate-1.96*sqrt(var(z))/sqrt(1000000))
+confidenceinterval
+
+
+
+```
+##question 4 
+```{r}
+#a
+g300 = chickwts[chickwts$weight>300,]
+g300
+#b
+linsed = chickwts[chickwts$feed=="linseed",]
+linsed
+#c
+mean(linsed$weight)
+#d
+nonlinsed = chickwts[chickwts$feed!="linseed",]
+mean(nonlinsed$weight)
+
+
+```
+
+
+##question 5
+```{r}
+library(MASS)
+#combine
+Pima=rbind(Pima.tr,Pima.te)
+#check
+p=all(rbind(Pima.tr,Pima.te)==Pima)
+p
+#seprate different standard
+z=cut(Pima$bmi,c(0,15,16,18.5,25,30,35,40,Inf))
+#label them
+levels(z)=c("Very severely underweight","Severely underweight","Underweight","Normal","Overweight","Obese Class I","Obese Class II","Obese Class III")
+table(z)
+plot(z)
+y=cut(Pima$bmi,c(0,18.5,25,Inf))
+levels(y)=c("underweight","normal","overweight")
+table(y)
+plot(y)
+```
+#according to the barplot, it tells us only a few persons are underweight and the majority people are overweight, the number of normal weight persons are ok.
+
+
+##question6 
+```{r}
+#Question6
+#a
+#use lm function
+h=lm(cars$dist~cars$speed,data=cars)
+summary(h)
+coefficient=coef(h)
+#b
+#use coefficient
+D.hat=coefficient[1]+coefficient[2]*cars$speed
+residuals=cars$dist-D.hat
+residuals
+summary(residuals)
+#comment:it is same as the part a.
+#c
+#plot 
+boxplot(residuals,ylab="residuals")
+#plot
+hist(residuals)
+#comment:histplot give us the good plot with group of distribution on variables,but boxplot give the most important line from the group.
+#d
+#plot qqnorm
+qqnorm(residuals)
+#plot qqline
+qqline(residuals)
+#comment:qqline plot one exace line based on qqnorm.qqline can illustrate the approximate look of qqnorm.They are linearly dependent.
+
+```
+since the residuals are lined well on the straight line, it indicates that the residuals are normally distributed
+
+
+
+

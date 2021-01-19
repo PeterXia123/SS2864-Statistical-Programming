@@ -1,0 +1,258 @@
+---
+title: "2864assignment4"
+author: "Yufei xia"
+date: "2019/3/28"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+library(evd)
+```
+
+#question1
+```{r}
+#(a)
+set.seed(19908)
+x = runif(10000)
+y = 3*(-log(-log(x)))+1.5
+mean(y)
+sd(y)
+#(b)
+#the theortical mean and sd is 
+1.5+3.0*0.5772
+#the theoritical sd is 
+3.0*pi/sqrt(6)
+#(C)
+hist(y,probability = T)
+x.seq = seq(-5,25,.05)
+k = (x.seq - 1)/3
+y.seq = 1/3*exp(-k -exp(-k))
+lines(x.seq , y.seq)
+
+#(d)
+g= rgumbel(10000,1.5,3)
+qqplot(g,y)
+abline(0,1)
+#the result show that the inverse function generated  number basiclly track with the generated number with rgumbel funtion 
+```
+(a) the mean and sd of the numbers in Y is 3.224732 and 3.843677
+(b) the true mean and sd is 3.2316 and 3.847649,which are quite colse to inverse method generated mean and sd.
+(c)from the plot, we know that the theoritical pdf plot track exactly as the bootstrap generated solutions
+(d)the result show that the inverse function generated  number basiclly has the same distribution as rgumbel function genereted number except for some outliers.
+
+
+#question2
+```{r}
+#Question 2
+#a)
+den=function(x){
+  f=x/0.25*exp(-x^2/0.5)
+  return(f)
+}
+inverse=function(x,a=0.5){
+  f=a*sqrt(-2*log(1-x))
+  return(f)
+}
+
+A=inverse(runif(20))
+hist(inverse(runif(1000)),probability=TRUE)
+curve(den(x),from=0,to=3,col=2,add=TRUE)
+#from the plot ,we can see that the theoritical pdf track excatly as inverse method generated number 
+#(b)
+sim.n=function(n,fun,a,b,M){    
+  x=double(n)
+  init<-0
+  repeat {                    
+    t=runif(n-init,a,b)
+    u=runif(n-init)
+    accept=(M*u<=fun(t))
+    m=sum(accept)
+    if(m>0)
+      x[(init+1):(m+init)]=t[accept]
+    if((m+init) ==n) 
+      break
+    init=init+m
+  }
+  x
+}   
+
+x=sim.n(20,den,0,3,1)
+hist(sim.n(1000,den,0,3,1),probability=TRUE)
+curve(den(x),from=0,to=3,col=2,add=TRUE)
+#from the plot ,we can see that the theoritical pdf track excatly as rejection method generated number 
+
+#c)
+system.time(inverse(runif(100000)))
+system.time(sim.n(100000,den,0,3,1))
+#from compare the system time of inverse method and rejection method in term of generating 100000 number. we know that inverse method is much faster than rejection method.
+```
+(a)from the plot ,we can see that the theoritical pdf track excatly as inverse method generated number.
+(b)from the plot ,we can see that the theoritical pdf track excatly as rejection method generated number.
+(c)from compare the system time of inverse method and rejection method in term of generating 100000 number. we know that inverse method is much faster than rejection method.
+
+#quesition3 
+```{r}
+#a
+set.seed(250)
+n =10000
+curve(cos(x)^2,0,2*pi)
+x = runif(n,0,2*pi)
+
+k = rep(0,500)
+for(i in 1:500){
+ x = runif(n,0,2*pi)
+mean = sum(cos(x)^2)/n
+ k[i]= mean*2*pi
+}
+left_bound= mean(k) - 1.96*sd(k)
+right_bound = mean(k) + 1.96*sd(k)
+confi_interval = c(left_bound,right_bound)
+confi_interval
+#b
+#the formula using integral is x/2 + sin(2x)/4 +c
+#plug into f(2*pi) - f(0)
+#we can get the value being pi
+#which is undered confidence inteval.
+
+#c
+rcos2 = function(k,a,b,M){
+    init = 0
+    x = rep(0,k)
+    repeat{
+    tt =runif(k-init,a,b)
+    u = runif(k-init)
+    accept =(M*u<=cos(tt)^2)
+    m = sum(accept)
+    if(m>0){
+      x[(init+1):(m+init)]=tt[accept]
+    }
+    if(m+init==k){
+      break
+    }
+    init = init +m
+    }
+    return(x)
+}
+
+z = rcos2(1000,0,2*pi,1)
+hist(z,probability = T)
+x.seq = seq(0,6,.01)
+y.seq = cos(x.seq)^2
+lines(x.seq,y.seq)
+
+
+#d
+value = rep(0,500)
+for(i in 1:500){
+z = rcos2(5000,0,2*pi,1)
+value[i] = mean(z)
+}
+lower_bound = mean(value) - sd(value)/sqrt(500)*1.96
+lower_bound
+upper_bound = mean(value) + sd(value)/sqrt(500)*1.96
+upper_bound 
+#the confidence intevval cover the true integration pi
+```
+(a) the confidence inteval is [3.09,3.18]
+(b)the true value is pi which is inside the confidence interval
+(c)we see the pdf basicly track with the generated number 
+(d)the confidence inteval is [3.140,3.144] the true parameter pi is concluded
+
+
+#question 4 
+```{r}
+for (i in 1:3){
+  par(mfrow=c(1,2))
+#(a)Simulate a sample, say x, with sample size n=100. Report its mean, sd, min, and max.
+x=rnorm(n=100, mean=3, sd=sqrt(3))
+fun.one.bootstrap=function(x){
+  one.bootstrap.mean=mean(x)
+  one.bootstrap.sd=sd(x)
+  one.bootstrap.min=min(x)
+  one.bootstrap.max=max(x)
+  return(c(one.bootstrap.mean=one.bootstrap.mean, one.bootstrap.sd=one.bootstrap.sd, one.bootstrap.min=one.bootstrap.min, one.bootstrap.max=one.bootstrap.max)) 
+}
+fun.one.bootstrap(x)
+
+#(b)Use R functions sample and replicate to resample x 50000 times with replacement.
+#The statistic is the sample mean and the output is booted.data. Find the mean, sd, min, and max of booted.data.
+booted.data=replicate(50000, mean(sample(x, replace=TRUE)))
+fun.multiple.bootstrap=function(y){
+  booted.data.mean=mean(y)
+  booted.data.sd=sd(y)
+  booted.data.min=min(y)
+  booted.data.max=max(y)
+  return(c(booted.data.mean=booted.data.mean, booted.data.sd=booted.data.sd, booted.data.min=booted.data.min, booted.data.max=booted.data.max))
+}
+fun.multiple.bootstrap(y=booted.data)
+
+#(c)Plot the histogram of booted.data.
+fun.plot.hist1=function(z){
+  initial.breaks=ceiling(log2(length(z))+1)
+  return(hist(z, probability=TRUE, breaks=2*initial.breaks))      #double initial breaks
+}
+fun.plot.hist1(z=booted.data)
+#Comment:
+#The shape looks like a norm distribution with its centre at aroud 3. 
+
+#(d)Plot the histogram of booted.data-mean(x) with initial bin *2
+booted.data1=booted.data-mean(x)
+fun.normal.density=function(x){                                   #define theoretical density function 
+  1/sqrt(2*pi)/sqrt(4/100)*exp((-x^2)/2/(4/100))                  #mean=0, var=sigma^2/n
+}
+fun.plot.hist2=function(z){
+  initial.breaks=ceiling(log2(length(z))+1)
+  hist(z, probability=TRUE, breaks=2*initial.breaks)              #double initial breaks
+  curve(fun.normal.density(x), from=-3, to=3, col=2, lty=2, add=TRUE)
+}
+fun.plot.hist2(z=booted.data1)
+}
+```
+(c)The shape looks like a norm distribution with its centre at aroud 3. 
+(d)the booted.data - mean(x) basiclly track with the normal distribution with u  = 0.
+(e) after two more times, each time we get the same property, which prove consistency
+
+#question 5
+
+asdadeawdwaedaedawdeaedaw
+```{r}
+#(1)
+my.obj = function(x,theta){
+   return(sum(abs(x-theta)))
+ 
+}
+#(2)
+print("b")
+x = c(3,7,9,12,15,18,21)
+optimize(my.obj,c(min(x),max(x)),x=x)
+#mimimum is 12,objective value is 35.
+#(3)
+print("c")
+nlminb(start = mean(x),objective = my.obj,x=x)
+#mimimum is 12,objective value is 35.
+#(4)
+print("d")
+x = c(1, 3, 7, 9, 12, 15, 18, 21)
+nlminb(start = mean(x),objective = my.obj,x=x)
+nlminb(start = max(x),objective = my.obj,x=x)
+nlminb(start = min(x),objective = my.obj,x=x)
+#from the result, each time we set up an different initial value. we get an different solution.
+
+optimize(my.obj,c(min(x),max(x)),x=x)
+optimize(my.obj,c(min(x)-1,max(x)+1),x=x)
+optimize(my.obj,c(min(x)-10,max(x)+10),x=x)
+#from the result,each time we set up a wider inverval. we get the solution larger.
+x=c(1, 3, 7, 9, 12, 15, 18, 21)
+my.theta=runif(1000,min=min(x),max=max(x))
+my.obj1=function(theta,x=c(1, 3, 7, 9, 12, 15, 18, 21)){
+  sum(abs(x-theta))
+}
+
+```
+(b)minimum is 12. mimumum value is 35
+(c)same as b 
+(d)from the result, each time we set up an different initial value. we get an different solution.from the result,each time we set up a wider inverval. we get the solution larger.
+the plot is as followed, the reason why we get different value each time we set up new initial condition is that there are unlimited number of minimum value between 9 to 12. so different ways of iteration will get into different solutions.
+   
+

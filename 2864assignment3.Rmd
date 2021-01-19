@@ -1,0 +1,224 @@
+---
+title: "2864assignment3"
+author: "Yufei xia"
+date: "2019/3/6"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+
+#question 1
+```{r cars}
+#a
+x = seq(-pi,pi,length = 100)
+y = seq(-pi,pi,length = 100)
+f = function(x,y){
+  a =(2+sin(2*x))*(cos(y))
+}
+z = outer(x,y,f)
+persp(x,y,z,xlim = range(x),ylim = range(y),zlim = range(z),phi = 30,theta = 30,sub = "3-D graph",main = "30&30")
+persp(x,y,z,xlim = range(x),ylim = range(y),zlim = range(z),phi = 45,theta = 45,sub = "3-D graph",main = "45&45")
+persp(x,y,z,xlim = range(x),ylim = range(y),zlim = range(z),phi = 60,theta = 60,sub = "3-D graph",main = "60&60")
+
+
+#b
+x<-seq(-3*pi,3*pi,length=100)
+y<-seq(-3*pi,3*pi,length=100)
+f<-function(x,y){r<-sqrt(x^2+y^2);10*sin(r)/r}
+z<-outer(x,y,f)
+persp(x,y,z,theta =30, phi = 30, expand = 0.5, col = "lightblue",  xlab = "X", ylab = "Y", zlab = "Sinc( r )"  
+)-> res
+persp(x, y, z, theta = 45, phi = 45, expand = 0.5, col = "lightblue", 
+xlab = "X", ylab = "Y", zlab = "Sinc( r )"  
+)-> res
+persp(x, y, z, theta = 60, phi = 60, expand = 0.5, col = "lightblue", 
+      ltheta = 120, shade = 0.75, ticktype = "detailed", xlab = "X", ylab = "Y", zlab = "Sinc( r )"  
+)-> res
+
+
+
+```
+the three plots is as showed.
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r}
+sum_fun= function(n){
+  if (!is.numeric(n))
+    stop("n is not numeric")
+  if (!is.vector(n))
+    stop("n is not a vector")
+  i<-1:n 
+  min_value<-sum(pmin(2^i,i^3))
+  max_value<-sum(pmax(2^i,i^3))
+  outcome<-c(min_value,max_value)
+  return(outcome)
+}
+n<-seq(10,250,by=30)
+sapply(n, sum_fun)
+
+
+
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+#question 3
+```{r}
+
+IQR.outliers = function(x){
+  if(any(is.na(x))){
+    print("there is missing value")
+  x=x[!is.na(x)]
+  }
+  if(!is.numeric(x)){
+    stop("x is not numeric")
+  }
+  n=length(x)
+  sortedx=sort(x)
+  iqr=diff(quantile(x,c(0.25,0.75)))
+  f=sortedx[round(0.25*n)]-1.5*iqr
+  t=sortedx[round(0.75*n)]+1.5*iqr
+  l=which(x<f)
+  r=which(x>t)
+  boxplot(x ,main=" Boxplot of Data")   
+  return(list(out.low = x[l], out.high = x[r],IQR = iqr))  
+}
+
+x = IQR.outliers(cars$speed)
+x
+#checking process 
+#cars$speed[0] = "hello"
+#x = IQR.outliers(cars$speed) #this will throw error masss
+
+```
+as we see, there is no outliers. and the iqr is 7
+#question 4
+```{r}
+#(1)
+
+directpoly = function(x,coef){
+  if(length(coef)<2){
+    stop("no way")
+  }
+  n = length(coef)
+  m = length(x)
+  final = rep(0,m)
+  result = 0
+  for(i in 1:n){
+    final =final+coef[i]*x^(i-1)
+  }
+  return(final)
+
+}
+  
+x = 1:4
+coef = c(2,6,2.5,-3)
+a = directpoly(x,coef)
+
+
+#(2)
+ hornerpoly = function(x,coef){
+   if(length(coef)<2){
+    stop("no way")
+   }
+   n = length(coef)
+   output = rep(coef[n],length(x))
+   for (i in length(coef)-1:1){
+   output = output*coef[i]+coef[i-1]
+   }
+   return(output)
+ }
+ 
+ x =-1:4
+ coef = c(2,6,2.5,-3)
+ 
+ #(3)
+ system.time(directpoly(x=seq(-10,10,len=500000), c(1,-2,2,3,4,6,7)))
+ system.time(hornerpoly(x=seq(-10,10,len=500000), c(1,-2,2,3,4,6,7)))
+ 
+
+```
+hornerpoly is faster than directpoly. its efficiency works better for large number of computations times.
+
+
+#question5
+```{r}
+my.unif = function(n, a, c, m, x0){
+ result = rep(0,n)
+ for(i in 1:n){
+   if(i == 1){
+     result[i] = (a*x0+c)%%m 
+   }
+   else{
+   result[i] = (a*result[i-1]+c)%%m 
+   }
+ }
+ result = result/m 
+}
+
+result1 =  my.unif(50, 172, 13, 32767,1728)
+
+result2 =  my.unif(50, 171, 51, 32767,2019)
+
+par(mfrow=c(1,2)) 
+hist(result1,main =)
+hist(result2)
+ks.test(result1,result2)
+# p_value is large enough, so we can't reject that the distribution of two samples look similar.  
+## K stats support the same arguments
+
+
+```
+p_value is large enough, so we can't reject that the distribution of two samples look similar. 
+
+#question 6 
+```{r}
+#(1)
+n = runif(10000)
+estimate_mean = mean(n^2)
+
+print("the theritical mean is 1/3")
+estimate_sd = sqrt(1/10000)*sd(n^2)
+left = estimate_mean- estimate_sd*1.96
+right = estimate_mean + estimate_sd*1.96
+left 
+right
+print("compare to the theritical mean, the confidence interval of situmalution show that 95% percent the true mean(0.333) is inside 0.328 to 0.340. which satisfy it")
+
+
+#(2)
+v<-(n^2+(1-n)^2)/2
+m<-length(v)
+lowerbound1<-mean(v)-1.96*sd(v)/sqrt(10000)
+lowerbound1
+upperbound2<-mean(v)+1.96*sd(v)/sqrt(10000)
+upperbound2 
+print("Compare with a) the confidence interval is a little narrow down")
+## Compare with a) the confidence interval is a little narrow down
+
+
+#(3)
+w<-((n/2)^2+(1-n/2)^2)/2
+p<-length(w)
+mean_u<-mean(w)
+lowerbound3<-mean_u-1.96*sd(w)/(sqrt(p))
+lowerbound3                   
+upperbound3<-mean_u+1.96*sd(w)/(sqrt(p))
+upperbound3
+print("compare to a and b, the c confidence interval is even more smaller.")
+
+#compare to a and b, the c confidence interval is even more smaller.
+
+```
+
+
+
+

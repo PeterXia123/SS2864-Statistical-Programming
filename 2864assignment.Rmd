@@ -1,0 +1,180 @@
+---
+title: "2864assignment1"
+author: "Yufei xia"
+date: "2019/1/20"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question1
+
+```{r cars}
+#search the package 
+search()
+#find the package and normal distribution use object function 
+objects("package:stats",pattern = "norm")
+?rnorm 
+?qqnorm
+#generate 100 random numbers according to normal distribution with mean = 0 stardard deviation = 1
+x = rnorm(100)
+#qqnorm is a generic function the default method of which produces a normal QQ plot of the values in y,and compare the theoritical quantile with pratical quantile.
+qqnorm(x)
+
+
+```
+the rnorm(100) generate 100 random numbers according to normal distribution with mean = 0 stardard deviation = 1.
+the qqnorm(x) is a generic function the default method of which produces a normal QQ plot of the values in x,and compare the theoritical quantile with pratical quantile.
+
+
+
+## Question2
+(a)
+```{r}
+#sum of 100 number using sum function 
+
+x = sample(1:100)
+sum1 = sum(x)
+#sum of 100 numbers using for loop 
+#set 0 initially
+sum2 = 0
+for (i in 1:100){
+  sum2 = sum2 + x[i]
+}
+print("the first sum is")
+sum1 
+print("the second sum is")
+sum2
+```
+the for loop and sum function get the same result.
+
+(b)
+```{r}
+#genelize 100 number form 1 to the 100
+x=sample(1:100)
+#get the smallest using the min function
+min1 = min(x)
+#get the smallest using the for loop
+min2 = x[1]
+for(i in 2:100){
+  if(min2>x[i]){
+    min2=x[i]
+  }
+}
+print("the first min is")
+print(min1)
+print("the second min is")
+print(min2)
+
+
+
+
+```
+the for loop and the min function get the same result.
+
+
+
+
+
+##question3 
+```{r}
+#intilize the sum and sum1 being the 4 elements vector.
+n = c(10,20,30,40)
+sum =c(0,0,0,0)
+sum1 =c(0,0,0,0)
+#using the for loop to calculate 
+for(i in 1:4){
+  for(j in 0:n[i]){
+    sum[i]= sum[i]+1.05^j
+  }
+}
+sum
+#using the formula to calculate the sum of 
+for(i in 1:4){
+  sum1[i]=(1-1.05^(n[i]+1))/(1-1.05)
+}
+sum1
+```
+this show that the for loop and equation get the same results.
+
+##question4
+```{r}
+#set up each individual columns
+c1 <- c(1:8);
+c2 <- c(rep(1,4),rep(2,4))
+c3 <- c(rep(1,2),rep(2,2),rep(1,2),rep(2,2))
+c4 <- c(rep(1:2,4))
+ #using cbind to combine all the columns together
+cbind(c1,c2,c3,c4)
+```
+##question5
+
+```{r}
+#find third row 
+Formaldehyde[3,]
+#5(b)
+#find carb column
+Formaldehyde$carb
+#5(c)
+#ploy with x-axis is carb, y-axis is optden
+plot(Formaldehyde$carb,Formaldehyde$optden)
+
+```
+from the plot we can see that there is an obvious relation between carb and optden in the formaldehyde graph.
+
+##question6
+```{r}
+#Determine the number of rows and columns for this data frame. 
+library(MASS)
+nrow(Pima.tr)
+ncol(Pima.tr)
+print("the median of different columns is")
+#set different columns as vectors
+x1=Pima.tr[,1]
+x2=Pima.tr[,2]
+x3=Pima.tr[,3]
+x4=Pima.tr[,4]
+x5=Pima.tr[,5]
+x6=Pima.tr[,6]
+x7=Pima.tr[,7]
+#calculate median of each column
+median(x1)
+median(x2)
+median(x3)
+median(x4)
+median(x5)
+median(x6)
+median(x7)
+print("the bmi for different type is as followed")
+mean(Pima.tr$bmi[Pima.tr$type =="Yes"])
+mean(Pima.tr$bmi[Pima.tr$type =="No"])
+```
+a)the number of row in this graph is 200, the number of column in this graph is 8.
+b)the median of each column is 
+c)the bmi for the people test yes for diabete is 34.70,and the bmi for the people who test no for diabete is 31.07
+which means that the more bmi index you have, the more chance you get diabetes
+
+
+##question7
+```{r}
+Cars93
+#find the number of columns
+ncol(Cars93)
+#find the columns names
+colnames(Cars93)
+#find the weight as vector of name "weight"
+weight=Cars93$Weight
+q=cut(weight,c(0,2500,3500,Inf))
+#seperate the different stardard.
+cars.size=factor(q,labels=c("small","medium","large"))
+#add new column
+cbind(Cars93,cars.size)
+#calculate each mean with small, medium and large sizees of cars
+mean(Cars93$MPG.city[cars.size =="small"])
+mean(Cars93$MPG.city[cars.size =="medium"])
+mean(Cars93$MPG.city[cars.size =="large"])
+
+```
+c)the result show that the larger the carsize is, the less MPG it is.
